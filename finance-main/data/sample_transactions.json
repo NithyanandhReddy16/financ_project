@@ -1,0 +1,142 @@
+[
+  {
+    "description": "Rent",
+    "amount": 15000,
+    "note": "Monthly house rent"
+  },
+  {
+    "description": "Groceries",
+    "amount": 4200,
+    "note": "Weekly grocery shopping"
+  },
+  {
+    "description": "Netflix subscription",
+    "amount": 649,
+    "note": "OTT streaming service"
+  },
+  {
+    "description": "Gym membership",
+    "amount": 1500,
+    "note": "Monthly fitness"
+  },
+  {
+    "description": "Zomato food delivery",
+    "amount": 3800,
+    "note": "Multiple food orders"
+  },
+  {
+    "description": "SIP Mutual Fund",
+    "amount": 5000,
+    "note": "Monthly SIP investment"
+  },
+  {
+    "description": "Electricity bill",
+    "amount": 1200,
+    "note": "Monthly electricity"
+  },
+  {
+    "description": "Amazon Shopping",
+    "amount": 6500,
+    "note": "Clothes and gadgets"
+  },
+  {
+    "description": "Movie tickets",
+    "amount": 1200,
+    "note": "Weekend entertainment"
+  },
+  {
+    "description": "LIC Premium",
+    "amount": 3000,
+    "note": "Life insurance"
+  },
+  {
+    "description": "Petrol",
+    "amount": 2500,
+    "note": "Monthly fuel"
+  },
+  {
+    "description": "Coffee shops",
+    "amount": 2100,
+    "note": "Daily coffee and snacks"
+  },
+  {
+    "description": "Water bill",
+    "amount": 300,
+    "note": "Monthly water charges"
+  },
+  {
+    "description": "Phone recharge",
+    "amount": 599,
+    "note": "Mobile recharge"
+  },
+  {
+    "description": "Online course Udemy",
+    "amount": 999,
+    "note": "Python course"
+  },
+  {
+    "description": "Dining out",
+    "amount": 2800,
+    "note": "Weekend restaurants"
+  },
+  {
+    "description": "Stock investment Zerodha",
+    "amount": 3000,
+    "note": "Monthly stock purchase"
+  },
+  {
+    "description": "Medicines",
+    "amount": 850,
+    "note": "Prescription medicines"
+  },
+  {
+    "description": "Clothing and accessories",
+    "amount": 4500,
+    "note": "Seasonal shopping"
+  },
+  {
+    "description": "Internet broadband",
+    "amount": 699,
+    "note": "Monthly broadband"
+  },
+  {
+    "description": "Public transport",
+    "amount": 1100,
+    "note": "Metro and bus"
+  },
+  {
+    "description": "Swiggy orders",
+    "amount": 1900,
+    "note": "Late night food"
+  },
+  {
+    "description": "Spotify premium",
+    "amount": 119,
+    "note": "Music streaming"
+  },
+  {
+    "description": "Amazon Prime",
+    "amount": 299,
+    "note": "Video streaming"
+  },
+  {
+    "description": "Weekend outings",
+    "amount": 2200,
+    "note": "Parks and entertainment"
+  },
+  {
+    "description": "Health checkup",
+    "amount": 1500,
+    "note": "Annual screening"
+  },
+  {
+    "description": "Gold savings scheme",
+    "amount": 2000,
+    "note": "Monthly gold savings"
+  },
+  {
+    "description": "PPF contribution",
+    "amount": 5000,
+    "note": "Public provident fund"
+  }
+]

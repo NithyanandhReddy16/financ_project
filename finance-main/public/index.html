@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WealthLens - Local Financial Advisor</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- AUTHENTICATION VIEW -->
+  <div id="authView" class="auth-view active">
+    <div class="auth-box">
+      <div class="logo">Wealth<span>Lens</span></div>
+      <p class="auth-sub">Secure Login</p>
+      
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+      </div>
+
+      <div id="loginForm" class="auth-form active">
+        <input type="email" id="loginEmail" placeholder="Email Address" />
+        <input type="password" id="loginPassword" placeholder="Password" />
+        <button class="btn btn-primary auth-btn" onclick="login()">Enter Vault</button>
+        <p class="auth-error" id="loginError"></p>
+      </div>
+
+      <div id="registerForm" class="auth-form">
+        <input type="text" id="regName" placeholder="Full Name" />
+        <input type="email" id="regEmail" placeholder="Email Address" />
+        <input type="password" id="regPassword" placeholder="Create a Password" />
+        <input type="password" id="regConfirmPassword" placeholder="Confirm Password" />
+        <button class="btn btn-primary auth-btn" onclick="register()">Create Account</button>
+        <p class="auth-error" id="regError"></p>
+        <p class="auth-success" id="regSuccess"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP WRAPPER (Hidden initially) -->
+  <div id="appWrapper" style="display:none">
+    <!-- HEADER -->
+    <header>
+      <div class="logo">Wealth<span>Lens</span></div>
+      <nav class="main-nav" id="mainNav" style="display:none">
+        <ul>
+          <li><a href="#" onclick="switchView('overview'); return false;" id="nav-overview" class="active">Overview</a></li>
+          <li><a href="#" onclick="switchView('spending'); return false;" id="nav-spending">Spending & Categories</a></li>
+          <li><a href="#" onclick="switchView('transactions'); return false;" id="nav-transactions">All Transactions</a></li>
+          <li><a href="#" onclick="switchView('assistant'); return false;" id="nav-assistant">AI Assistant</a></li>
+          <li><a href="#" onclick="switchView('history'); loadHistory(); return false;" id="nav-history">History</a></li>
+          <li><a href="#" onclick="logout(); return false;" class="logout-link">Logout</a></li>
+        </ul>
+      </nav>
+      <div class="header-right">
+        <span class="health-label" id="healthBadge" style="display:none">Health Score<br/><span class="health-score" id="healthScoreVal">0/100</span></span>
+      </div>
+    </header>
+
+    <main>
+    <!-- ── UPLOAD SECTION (Visible when no data) ── -->
+    <section class="upload-section" id="uploadSection">
+      <p class="section-label">Your Personal Finance Analyzer</p>
+      <h1 class="hero-title">Understand where your<br /><em>money truly goes</em></h1>
+      <p class="hero-sub">Upload your transaction file or paste expenses - WealthLens will categorize,<br />analyze, and build your personal wealth roadmap locally.</p>
+
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">📂</div>
+        <h3>Drop your file here</h3>
+        <p>Supports <strong>CSV · TXT · JSON</strong></p>
+        <input type="number" id="uploadIncomeInput" placeholder="Monthly Income (Optional)" style="width: 80%; border-radius: 12px; padding: 0.8rem; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: inherit; font-size: 1rem; margin-bottom: 1rem; text-align: center;" />
+        <br/>
+        <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">Browse File</button>
+        <input type="file" id="fileInput" accept=".csv,.txt,.json" style="display:none" />
+      </div>
+
+      <div class="manual-input">
+        <h4>✍️ &nbsp;Paste or type your transactions</h4>
+        <input type="number" id="incomeInput" placeholder="Monthly Income (Optional)" style="width: 100%; border-radius: 12px; padding: 1rem; border: 1px solid var(--border); background: var(--surface); color: inherit; font-size: 1rem; margin-bottom: 1rem;" />
+        <textarea id="txInput" placeholder="Examples:
+Rent — ₹15,000
+Groceries — ₹4,200
+Netflix — ₹649
+Gym — ₹1,500
+Zomato — ₹3,800
+SIP Mutual Fund — ₹5,000
+Electricity — ₹1,200
+Amazon Shopping — ₹6,500
+LIC Premium — ₹3,000"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="loadSample()">Load Sample Data</button>
+          <button class="btn btn-primary" id="analyzeBtn" onclick="analyzeTransactions()">✦ Analyze Now</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── LOADING ── -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p class="loading-text">Analyzing your financial patterns...</p>
+      <p class="loading-sub">This may take a few seconds</p>
+    </div>
+
+    <!-- ── ERROR ── -->
+    <div class="error-box" id="errorBox" style="display:none">
+      <span class="error-icon">⚠️</span>
+      <p id="errorMsg">Something went wrong.</p>
+      <button class="btn btn-secondary" onclick="resetApp()">Try Again</button>
+    </div>
+
+    <!-- ── RESULTS SHARED CONTAINER ── -->
+    <section class="results" id="results" style="display:none">
+      <div class="results-header">
+        <div>
+          <p class="section-label">Analysis Complete</p>
+          <h2 class="section-title" id="resultsTitle">Your Financial Breakdown</h2>
+          <p class="results-sub" id="resultsSub"></p>
+        </div>
+        <button class="btn btn-secondary" onclick="resetApp()">↩ New Analysis</button>
+      </div>
+
+      <!-- VIEW: OVERVIEW -->
+      <div id="view-overview" class="app-view active">
+        <!-- Health Bar -->
+        <div class="health-bar-section" id="healthSection">
+          <div class="health-bar-label">
+            <span>Financial Health Score</span>
+            <span id="healthScoreLabel">0/100</span>
+          </div>
+          <div class="health-bar-bg">
+            <div class="health-bar-fill" id="healthBarFill"></div>
+          </div>
+          <div class="health-bar-desc" id="healthBarDesc"></div>
+        </div>
+
+        <div class="summary-grid" id="summaryGrid"></div>
+
+        <div class="savings-banner" id="savingsBanner">
+          <div class="savings-icon">💡</div>
+          <div>
+            <div class="savings-title">Monthly Savings Potential</div>
+            <div class="savings-amount" id="savingsAmount">₹0</div>
+            <div class="savings-desc">By cutting avoidable expenses, you could save this amount every month.</div>
+          </div>
+        </div>
+
+        <div class="insights-grid">
+          <div class="insight-card">
+            <h3><span class="i-icon">🔻</span> Where to Cut Spending</h3>
+            <div id="cutList"></div>
+          </div>
+          <div class="insight-card">
+            <h3><span class="i-icon">📈</span> Where to Redirect for Wealth</h3>
+            <div id="growList"></div>
+          </div>
+        </div>
+
+        <div class="wealth-plan">
+          <div class="wealth-plan-header">
+            <h3>✦ Ideal Wealth Allocation Plan</h3>
+            <p id="wealthPlanNote"></p>
+          </div>
+          <div class="wealth-allocation" id="wealthAlloc"></div>
+        </div>
+      </div>
+
+      <!-- VIEW: SPENDING -->
+      <div id="view-spending" class="app-view" style="display:none">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>📊 Spending Distribution</h3>
+            <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h3>📈 Category Comparison</h3>
+            <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW: TRANSACTIONS -->
+      <div id="view-transactions" class="app-view" style="display:none">
+        <div class="chart-full">
+          <h3>🔥 All Transactions — Ranked by Amount</h3>
+          <div class="chart-wrap-full"><canvas id="horizontalBar"></canvas></div>
+        </div>
+        
+        <div class="transactions-section">
+          <div class="section-row">
+            <h3>📋 Transaction Breakdown</h3>
+            <div class="filter-tabs" id="filterTabs">
+              <button class="tab active" data-cat="all">All</button>
+              <button class="tab" data-cat="basicNeeds">Basic Needs</button>
+              <button class="tab" data-cat="unwantedSpending">Unwanted</button>
+              <button class="tab" data-cat="investments">Investments</button>
+              <button class="tab" data-cat="other">Other</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="txTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Transaction</th>
+                  <th>Amount</th>
+                  <th>Category</th>
+                  <th>Priority</th>
+                </tr>
+              </thead>
+              <tbody id="txBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW: ASSISTANT -->
+      <div id="view-assistant" class="app-view" style="display:none">
+        <div class="chat-container">
+          <div class="chat-header">
+            <h3>🤖 AI WealthLens Assistant</h3>
+            <p>Ask questions about your transactions based on RAG processing.</p>
+          </div>
+          <div class="chat-history" id="chatHistory">
+            <div class="chat-msg ai">Hi! Your financial data is loaded. Ask me anything about your spending pattern!</div>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" id="chatInput" placeholder="e.g. How much did I spend on food this month?" onkeypress="if(event.key==='Enter') sendChat()" />
+            <button class="btn btn-primary" id="chatSendBtn" onclick="sendChat()">Send</button>
+          </div>
+      </div>
+
+      <!-- VIEW: HISTORY -->
+      <div id="view-history" class="app-view" style="display:none">
+        <h2 style="margin-bottom: 2rem;">Your Saved Analyses</h2>
+        <div class="history-grid" id="historyGrid" style="display: grid; gap: 1rem;">
+           <p style="color: var(--muted)">Loading history...</p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>WealthLens &copy; 2026 &nbsp;·&nbsp; Powered by Local & LLM Analysis &nbsp;·&nbsp; For educational purposes</p>
+  </footer>
+  </div> <!-- END APP WRAPPER -->
+
+  <script src="js/app.js"></script>
+</body>
+</html>
